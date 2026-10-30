@@ -1,4 +1,5 @@
 import datetime
+import random
 import streamlit as st
 
 # --- 頁面基本設定 ---
@@ -46,10 +47,7 @@ if menu == "🏠 今日免費號碼":
   if st.button(
       "🎲 立即生成今日免費生命密碼號碼", type="primary", use_container_width=True
   ):
-    # 簡單根據生日產生偽隨機但有規律嘅示範號碼
     seed_val = birthday.year + birthday.month + birthday.day
-    import random
-
     random.seed(seed_val)
     lucky_nums = sorted(random.sample(range(1, 50), 6))
 
@@ -102,7 +100,6 @@ elif menu == "💎 VIP 尊貴會員專區":
       "🔒 Stripe 官方加密結帳，隨時可自主取消訂閱，一杯咖啡錢換取專業數據導航！"
   )
 
-  # 模擬 Stripe 結帳按鈕 (之後可換入真實 Stripe Payment Link URL)
   stripe_url = "https://buy.stripe.com/your_actual_link_here"
   st.link_button(
       "🚀 立即前往安全結帳 (Stripe 信用卡付款)",
@@ -117,7 +114,6 @@ else:
   st.subheader("⚙️ 會員帳戶管理")
   st.write("在此可以管理您的 VIP 訂閱狀態、查看帳單或取消服務。")
 
-  # 狀態顯示示範
   st.info("目前狀態：**免費體驗會員** (升級 VIP 以解鎖全部高級大數據回測功能)")
 
   if st.button("管理我的 Stripe 訂閱"):
