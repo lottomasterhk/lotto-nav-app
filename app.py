@@ -10,7 +10,7 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# 🌟 嵌入 Google Search Console 正式 HTML 驗證標籤與 UI 隱藏 CSS
+# 🌟 正確載入 Google Search Console 驗證標籤與 UI 隱藏 CSS
 st.markdown("""
 <head>
     <meta name="google-site-verification" content="nbbI0OAcsp83w065H9PjLBf959kRLFx4kK16f1KJhfI" />
@@ -20,17 +20,12 @@ st.markdown("""
 footer {visibility: hidden !important; display: none !important;}
 header {visibility: hidden !important; display: none !important;}
 .stAppDeployButton {display: none !important; visibility: hidden !important;}
-/* 徹底封鎖右下角所有 Streamlit 浮動選單與徽章 */
 div[data-testid="stToolbar"] {visibility: hidden !important; display: none !important;}
 div[class*="viewerBadge"] {display: none !important; visibility: hidden !important; pointer-events: none !important;}
 div[class*="styles_viewerBadge"] {display: none !important; visibility: hidden !important;}
 #GithubIcon {visibility: hidden !important; display: none !important;}
 .viewerBadge_container__1QSob {display: hidden !important; visibility: hidden !important;}
 
-/* 強制隱藏畫面右下角任何懸浮按鈕 */
-.reportview-container .main footer {visibility: hidden !important;}
-
-/* 強制全局文字在深色模式下保持清晰可見 */
 .stApp {
     color: #222222;
 }
@@ -115,7 +110,6 @@ div[class*="styles_viewerBadge"] {display: none !important; visibility: hidden !
     color: #c53030 !important;
 }
 
-/* 🌟 強制修正 Streamlit 原生成功、提示框在深色模式下變黑底看不見的問題 */
 div.stSuccess {
     background-color: #d4edda !important;
     color: #155724 !important;
@@ -132,7 +126,6 @@ div.stInfo p, div.stInfo span {
     color: #0c5460 !important;
 }
 
-/* 🌟 強制按鈕在手機深色模式下保持清晰醒目 */
 .stButton button {
     background-color: #ff4b4b !important;
     color: #ffffff !important;
@@ -144,7 +137,6 @@ div.stInfo p, div.stInfo span {
     color: #ffffff !important;
 }
 
-/* 🌟 超吸睛動態閃爍發光卡片（專門用來包裝今日限定 BONUS） */
 @keyframes glow-pulse {
     0% { box-shadow: 0 0 5px rgba(49,151,149, 0.4), 0 0 10px rgba(49,151,149, 0.2); border-color: #319795; }
     50% { box-shadow: 0 0 20px rgba(49,151,149, 0.8), 0 0 30px rgba(49,151,149, 0.4); border-color: #2b6cb0; }
@@ -457,7 +449,7 @@ with tab2:
         <div class="bonus-glow-card">
             <h3 style="margin-top: 0;">🎁 ✨ 【今日限定 BONUS】明日專屬個人幸運顏色與穿搭指引</h3>
             <p style="margin-bottom: 12px; line-height: 1.6;">
-                作為今日成為 VIP 的額外驚喜加碼！男士女士唔使再為 "明天著咩衫" 頭痛，系統一秒幫您決定好最夾的開運穿搭，全方位旺財氣：
+                作為今日成為 VIP 的額外驚喜加碼！男士女士唔使再為「明天著咩衫」頭痛，系統一秒幫您決定好最夾的開運穿搭，全方位旺財氣：
             </p>
         </div>
         """, unsafe_allow_html=True)
@@ -509,7 +501,7 @@ with tab2:
 with tab3:
     st.markdown("""
     <div class="section-card">
-        <h3>⚙️ ⚙️ 帳戶與訂閱管理</h3>
+        <h3>⚙️ 帳戶與訂閱管理</h3>
         <p>如果您已經是我們的 VIP 會員，您可以隨時前往管理中心查看訂單、更新信用卡或取消訂閱：</p>
     </div>
     """, unsafe_allow_html=True)
