@@ -16,15 +16,11 @@ st.set_page_config(
 )
 
 # 🌐 處理 Google Search Console 的 HTML 檔案直接驗證需求
-# 當 Google 機械人訪問你的網站根目錄的驗證檔案時，直接輸出驗證內容
 import sys
-# 檢查當前路徑或直接在首頁頂部攔截
 if st.query_params.get("file") == "googleab04b8d10161eec6" or st.sidebar.text_input("v", value="") == "googleab04b8d10161eec6":
     st.write("google-site-verification: googleab04b8d10161eec6.html")
     st.stop()
 
-# 由於 Streamlit 雲端特性，我們用最穩陣的方法：直接在頁面最上方或獨立路由展示驗證文字
-# 如果 Google 機械人訪問特定的驗證路由，我們直接顯示內容
 try:
     if "googleab04b8d10161eec6" in str(st.query_params):
         st.write("google-site-verification: googleab04b8d10161eec6.html")
@@ -32,10 +28,10 @@ try:
 except:
     pass
 
-# 🌟 嵌入 Google Search Console 驗證標籤與 UI 隱藏 CSS
+# 🌟 嵌入 Google Search Console 正式 HTML 驗證標籤與 UI 隱藏 CSS
 st.markdown("""
 <head>
-    <meta name="google-site-verification" content="googleab04b8d10161eec6" />
+    <meta name="google-site-verification" content="nbbI0OAcsp83w065H9PjLBf959kRLFx4kK16f1KJhfI" />
 </head>
 <style>
 #MainMenu {visibility: hidden !important; display: none !important;}
