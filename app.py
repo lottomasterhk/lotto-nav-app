@@ -2,11 +2,6 @@ import streamlit as st
 import random
 from datetime import date, timedelta
 
-# 檢查是否為 Google Search Console 的 HTML 檔案驗證請求
-query_params = st.query_params
-if "path" in query_params or st.experimental_get_query_params():
-    pass
-
 # 頁面基本設定
 st.set_page_config(
     page_title="AI 智能六合彩 VIP 尊貴會員導航",
@@ -14,19 +9,6 @@ st.set_page_config(
     layout="centered",
     initial_sidebar_state="collapsed"
 )
-
-# 🌐 處理 Google Search Console 的 HTML 檔案直接驗證需求
-import sys
-if st.query_params.get("file") == "googleab04b8d10161eec6" or st.sidebar.text_input("v", value="") == "googleab04b8d10161eec6":
-    st.write("google-site-verification: googleab04b8d10161eec6.html")
-    st.stop()
-
-try:
-    if "googleab04b8d10161eec6" in str(st.query_params):
-        st.write("google-site-verification: googleab04b8d10161eec6.html")
-        st.stop()
-except:
-    pass
 
 # 🌟 嵌入 Google Search Console 正式 HTML 驗證標籤與 UI 隱藏 CSS
 st.markdown("""
@@ -475,7 +457,7 @@ with tab2:
         <div class="bonus-glow-card">
             <h3 style="margin-top: 0;">🎁 ✨ 【今日限定 BONUS】明日專屬個人幸運顏色與穿搭指引</h3>
             <p style="margin-bottom: 12px; line-height: 1.6;">
-                作為今日成為 VIP 的額外驚喜加碼！男士女士唔使再為「明天著咩衫」頭痛，系統一秒幫您決定好最夾的開運穿搭，全方位旺財氣：
+                作為今日成為 VIP 的額外驚喜加碼！男士女士唔使再為 "明天著咩衫" 頭痛，系統一秒幫您決定好最夾的開運穿搭，全方位旺財氣：
             </p>
         </div>
         """, unsafe_allow_html=True)
@@ -527,7 +509,7 @@ with tab2:
 with tab3:
     st.markdown("""
     <div class="section-card">
-        <h3>⚙️ 帳戶與訂閱管理</h3>
+        <h3>⚙️ ⚙️ 帳戶與訂閱管理</h3>
         <p>如果您已經是我們的 VIP 會員，您可以隨時前往管理中心查看訂單、更新信用卡或取消訂閱：</p>
     </div>
     """, unsafe_allow_html=True)
