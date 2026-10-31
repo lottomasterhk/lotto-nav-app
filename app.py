@@ -13,7 +13,7 @@ st.set_page_config(
 )
 
 # 🌟 專屬加入 Google Search Console 驗證標籤
-st.markdown('<meta name="google-site-verification" content="nbbI0OAcsp83w065H9PjLBf959kRLFx4kK16f1KJhfI" />', unsafe_allow_html=True)
+st.markdown('<meta name="google-site-verification" content=zFjYtXRlFqbJnnZtMR9bT5wMnJgD4Te5xUaFoiUiVSw" />', unsafe_allow_html=True)
 
 # 徹底隱藏 Streamlit 右下角所有官方選單、工具列及個人檔案跳轉連結
 st.markdown("""
