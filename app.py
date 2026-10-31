@@ -7,7 +7,7 @@ import datetime
 # ==========================================
 st.set_page_config(
     page_title="六合彩生命密碼 | AI 大數據幸運號碼導航",
-    page_icon="https://aimasterlotto.com/logo.png",  # 瀏覽器分頁小圖標
+    page_icon="logo.png",  # 使用你剛剛上載到 GitHub 的 logo.png 作為瀏覽器分頁小圖標
     layout="wide"
 )
 
@@ -33,7 +33,7 @@ st.markdown("""
 # 2. 側邊欄 (Sidebar) 設置 Company Logo 與導航
 # ==========================================
 with st.sidebar:
-    # 顯示完整的 Company Logo（包含圖標與中英文字）
+    # 顯示完整的 Company Logo（包含圖標與中英文字的 company_logo.png）
     st.image("company_logo.png", use_container_width=True)
     
     st.markdown("---")
@@ -58,7 +58,7 @@ with st.sidebar:
 # 3. 網頁主要內容區 (Main Content)
 # ==========================================
 
-# 在首頁正上方居中放一次 Company Logo 作為大 Banner
+# 在首頁正上方居中放一次完整 Company Logo 作為大 Banner
 col1, col2, col3 = st.columns([1, 2, 1])
 with col2:
     st.image("company_logo.png", use_container_width=True)
