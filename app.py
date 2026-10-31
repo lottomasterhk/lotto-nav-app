@@ -2,7 +2,6 @@ import streamlit as st
 import random
 import pandas as pd
 import os
-import time
 from datetime import date, timedelta
 
 # ==========================================
@@ -200,7 +199,7 @@ with tab1:
     col_a, col_b, col_c = st.columns([1, 2, 1])
     with col_b:
         if st.button("🎲 立即生成今日免費生命密碼號碼", use_container_width=True):
-            random.seed(str(free_birthday))
+            random.seed(str(free_birthday) + str(date.today()))
             free_numbers = sorted(random.sample(range(1, 50), 6))
             st.success(f"🎯 依據您的生命密碼（{free_birthday}）推算出的免費基礎號碼：**{free_numbers}**")
             st.info("💡 提示：此為基礎隨機運算號碼。若要解鎖「生命密碼多組深度推演」與「心水號碼歷史回測機」，請升級 VIP！")
@@ -374,7 +373,7 @@ with tab2:
 
         st.markdown("---")
 
-        # --- VIP 核心功能 1：生命密碼推演 ---
+        # --- VIP 核心功能 1：生命密碼推演 (以今日日期鎖定) ---
         st.markdown("""
         <div class="section-card">
             <h3>🧬 1. 生命密碼獨家深度推演（提高命中率・動態防盲門）</h3>
@@ -385,7 +384,8 @@ with tab2:
         pick_count = st.selectbox("🎯 請選擇您心儀的組合字數：", [6, 7, 8, 9, 10], index=0, key="vip_pick_count")
 
         if st.button("✨ 立即依最新資料庫與生命密碼生成 3 組高勝率組合", use_container_width=True, key="btn_life_code"):
-            seed_str = str(vip_birthday) + str(pick_count)
+            # 🌟 鎖定今日日期 + 生日，確保今日之內多次點擊結果完全一致
+            seed_str = str(vip_birthday) + str(pick_count) + str(date.today())
             random.seed(seed_str)
             all_pool = list(range(1, 50))
             group1 = sorted(random.sample(all_pool, pick_count))
@@ -396,7 +396,7 @@ with tab2:
 
             st.markdown(f"""
             <div class="lucky-box">
-                <h4>🌟 專屬生命密碼推薦（生辰：{vip_birthday} ｜ 規格：{pick_count} 字）：</h4>
+                <h4>🌟 專屬生命密碼推薦（生辰：{vip_birthday} ｜ 日期：{date.today()}）：</h4>
                 <p style="font-size: 17px; font-weight: bold; line-height: 1.6;">
                     • 第一組：{group1}<br>
                     • 第二組：{group2}<br>
@@ -404,11 +404,11 @@ with tab2:
                 </p>
             </div>
             """, unsafe_allow_html=True)
-            st.info("💡 提示：本期資料庫已完成最新動態更新，成功剔除近期重複開出之死角與盲門。")
+            st.info("💡 提示：今日磁場已鎖定，期號數據同步最新。")
 
         st.markdown("---")
 
-        # --- VIP 核心功能 2：AI 大數據運算 ---
+        # --- VIP 核心功能 2：AI 大數據運算結果 (以今日日期鎖定) ---
         st.markdown("""
         <div class="section-card">
             <h3>📊 2. AI 核心大數據運算結果</h3>
@@ -417,19 +417,20 @@ with tab2:
         """, unsafe_allow_html=True)
 
         if st.button("🚀 執行 AI 深度趨勢運算", use_container_width=True, key="btn_ai_calc"):
-            dynamic_seed = int(str(vip_birthday).replace("-", "")) + int(time.time() * 1000) % 100000
-            random.seed(dynamic_seed)
+            # 🌟 鎖定今日日期 + 生日，確保今日之內 AI 預測號碼恆常不變
+            ai_seed = str(vip_birthday).replace("-", "") + str(date.today()).replace("-", "") + "ai_core"
+            random.seed(ai_seed)
             
             ai_main = sorted(random.sample(range(1, 50), 6))
             ai_extra = random.randint(1, 49)
             
             st.balloons()
-            st.success(f"🎯 **AI 核心預測號碼**：{ai_main} ＋ 特別號：【**{ai_extra}**】")
-            st.write(f"📈 **個人化回測評語**：已即時聯動最新一期開彩數據與生辰 **{vip_birthday}** 進行動態加權運算，勝率顯著提升。")
+            st.success(f"🎯 **AI 核心預測號碼（今日鎖定版）**：{ai_main} ＋ 特別號：【**{ai_extra}**】")
+            st.write(f"📈 **個人化回測評語**：今日（{date.today()}）已為生辰 **{vip_birthday}** 的您鎖定專屬運勢矩陣，今日內重整或再按結果完全一致。")
 
         st.markdown("---")
 
-        # --- VIP 核心功能 3：幸運方位、時間與地點導航 (已升級為每次動態變換) ---
+        # --- VIP 核心功能 3：個人幸運方位、時間與地點導航 (以今日日期鎖定) ---
         st.markdown("""
         <div class="section-card">
             <h3>🧭 3. 個人幸運方位、時間與地點導航</h3>
@@ -437,8 +438,8 @@ with tab2:
         </div>
         """, unsafe_allow_html=True)
 
-        # 🌟 結合生日與當前時間隨機抽選方位、投注站與黃金時段
-        nav_seed = int(str(vip_birthday).replace("-", "")) + int(time.time()) % 9999
+        # 🌟 嚴格鎖定今日日期 + 生日，確保今日之內的幸運方位、投注站與黃金時段 100% 固定不變！
+        nav_seed = str(vip_birthday).replace("-", "") + str(date.today()).replace("-", "") + "nav_direction"
         rng_nav = random.Random(nav_seed)
 
         directions = [
@@ -477,12 +478,12 @@ with tab2:
         chosen_time = rng_nav.choice(time_slots)
 
         st.markdown(f"""
-| 項目 | 個人化精準指引（依據您的生日：{vip_birthday}・動態運算） |
+| 項目 | 今日精準指引（日期：{date.today()} ｜ 生日：{vip_birthday}） |
 | :--- | :--- |
 | 🌟 **今日吉利方位** | **{chosen_dir}** — {dir_desc} |
 | 🏠 **屋企下注吉位** | 建議在 **{chosen_home}** 打開手機進行網上投注 |
-| 🏢 **推薦香港投注站** | **{chosen_shop}**（能量場與您本期磁場最契合） |
-| ⏰ **最佳黃金時段** | **{chosen_time}**（切勿亂揀時間盲買） |
+| 🏢 **推薦香港投注站** | **{chosen_shop}**（今日能量場與您最契合） |
+| ⏰ **最佳黃金時段** | **{chosen_time}**（切勿錯過今日黃金時段） |
         """, unsafe_allow_html=True)
 
         st.markdown("---")
@@ -548,9 +549,9 @@ with tab2:
             <div class="lucky-box" style="border-left-color: #319795;">
                 <h4>🌟 您的【{tomorrow_date.strftime('%Y-%m-%d')}（明天）】一石二鳥催運穿搭指南：</h4>
                 <p style="font-size: 16px; line-height: 1.6;">
-                    • 🎯 <strong>明天開運主色調</strong>：<span style="color: #2b6cb0; font-weight: bold; font-size: 18px;">{chosen_color}</span><br>
-                    • 👔 <strong>穿搭建議</strong>：唔使再頭痛！上衣/外套直接揀呢個色系，今晚準備好，明天出門返工直接吸財兼吸貴人！<br>
-                    • 📈 <strong>雙效磁場</strong>：{color_meaning}
+                    • 🎯 <strong>明天開運主色調</strong>: <span style="color: #2b6cb0; font-weight: bold; font-size: 18px;">{chosen_color}</span><br>
+                    • 👔 <strong>穿搭建議</strong>: 唔使再頭痛！上衣/外套直接揀呢個色系，今晚準備好，明天出門返工直接吸財兼吸貴人！<br>
+                    • 📈 <strong>雙效磁場</strong>: {color_meaning}
                 </p>
             </div>
             """, unsafe_allow_html=True)
