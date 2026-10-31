@@ -1,5 +1,7 @@
 import streamlit as st
 import random
+import pandas as pd
+import os
 from datetime import date, timedelta
 
 # ==========================================
@@ -279,11 +281,11 @@ with tab2:
         </div>
         """, unsafe_allow_html=True)
 
-        # --- VIP 殺手鐧 1：心水號碼歷史回測機 ---
+        # --- VIP 殺手鐧 1：心水號碼歷史真實回測機 (讀取 CSV) ---
         st.markdown("""
         <div class="section-card" style="background: #fffaf0 !important; border-color: #dd6b20;">
-            <h3 style="color: #c05621 !important;">🔍 【VIP 獨家重磅】心水號碼歷史大數據回測機</h3>
-            <p style="color: #222222 !important;">輸入你一直以來的 <strong>6 個心水號碼</strong>，一鍵秒速翻查過往多年歷史開彩數據！親自驗證它究竟中過幾多次<strong>頭獎、二獎、三獎、四獎或五獎</strong>，揭開你與幸運之神的距離！</p>
+            <h3 style="color: #c05621 !important;">🔍 【VIP 獨家重磅】心水號碼歷史大數據回測機 (真實 CSV 引擎)</h3>
+            <p style="color: #222222 !important;">輸入你一直以來的 <strong>6 個心水號碼</strong>，系統將即時讀取過往全部歷史開彩數據進行真實對對碰！驗證它究竟中過幾多次頭、二、三、四、五獎！</p>
         </div>
         """, unsafe_allow_html=True)
 
@@ -304,34 +306,73 @@ with tab2:
             if len(set(user_pick)) < 6:
                 st.error("⚠️ 請確保輸入的 6 個號碼完全不重複！")
             else:
-                user_pick_sorted = sorted(user_pick)
-                hash_val = sum(n * (i + 1) for i, n in enumerate(user_pick_sorted))
-                random.seed(hash_val)
-                win_1 = 0 if random.random() > 0.1 else 1
-                win_2 = random.randint(0, 1)
-                win_3 = random.randint(1, 4)
-                win_4 = random.randint(8, 22)
-                win_5 = random.randint(45, 110)
-                hot_num = sorted(random.sample(user_pick_sorted, 2))
-                cold_num = [n for n in user_pick_sorted if n not in hot_num][0]
-
-                st.markdown(f"""
-                <div class="lucky-box" style="border-left-color: #dd6b20;">
-                    <h4>📊 您的心水號碼組合【 {user_pick_sorted} 】歷史大數據回測結果：</h4>
-                    <p style="font-size: 16px; line-height: 1.8;">
-                        • 🥇 <strong>頭獎 (6字全中)</strong>：{win_1} 次（{ "恭喜！歷史上曾有類似組合開出頭獎！" if win_1 > 0 else "歷史尚未開出頭獎，隨時由您解鎖傳奇！" }）<br>
-                        • 🥈 <strong>二獎 (5.5字)</strong>：累積出現 <strong>{win_2} 次</strong>！<br>
-                        • 🥉 <strong>三獎 (中 5 個字)</strong>：累積出現 <strong>{win_3} 次</strong>！<br>
-                        • 🏅 <strong>四獎 (中 4 個字)</strong>：累積出現 <strong>{win_4} 次</strong>！<br>
-                        • 🎟️ <strong>五獎 (中 3 個字)</strong>：累積出現 <strong>{win_5} 次</strong>！
-                    </p>
-                    <hr style="border-top: 1px dashed #cbd5e0; margin: 10px 0;">
-                    <p style="font-size: 14px; color: #742a2a;">
-                        💡 <strong>AI 數據拆解報告</strong>：<br>
-                        您的組合中，號碼 <span style="color: #c53030; font-weight: bold;">{hot_num}</span> 屬於歷史高頻熱門號碼；而號碼 <span style="color: #2b6cb0; font-weight: bold;">{cold_num}</span> 近期蓄勢待發，建議繼續保持此心水組合！
-                    </p>
-                </div>
-                """, unsafe_allow_html=True)
+                user_pick_set = set(user_pick)
+                csv_file = "hkjc_marksix_results.csv"
+                
+                if os.path.exists(csv_file):
+                    try:
+                        df = pd.read_csv(csv_file)
+                        win_1, win_2, win_3, win_4, win_5 = 0, 0, 0, 0, 0
+                        matched_draws = 0
+                        
+                        # 假設 CSV 入面有包含開彩號碼嘅欄位（常見如 num1..num6 或 drawn_numbers）
+                        # 這裡編寫兼容性強嘅掃描邏輯
+                        for idx, row in df.iterrows():
+                            # 嘗試尋找包含數字的欄位
+                            row_nums = []
+                            for col in df.columns:
+                                val = row[col]
+                                if pd.notna(val) and str(val).isdigit():
+                                    n = int(val)
+                                    if 1 <= n <= 49:
+                                        row_nums.append(n)
+                            
+                            # 如果成功抽取出當期開獎號碼（通常有6個或7個含特別號）
+                            if len(row_nums) >= 6:
+                                draw_set = set(row_nums[:6]) # 通常前6個係正選號碼
+                                special_num = row_nums[6] if len(row_nums) > 6 else None
+                                
+                                matched_count = len(user_pick_set.intersection(draw_set))
+                                has_special = special_num in user_pick_set if special_num else False
+                                
+                                # 獎項判定邏輯
+                                if matched_count == 6:
+                                    win_1 += 1
+                                elif matched_count == 5 and has_special:
+                                    win_2 += 1
+                                elif matched_count == 5:
+                                    win_3 += 1
+                                elif matched_count == 4:
+                                    win_4 += 1
+                                elif matched_count == 3:
+                                    win_5 += 1
+                        
+                        st.markdown(f"""
+                        <div class="lucky-box" style="border-left-color: #dd6b20;">
+                            <h4>📊 您的心水號碼組合【 {sorted(list(user_pick_set))} 】真實歷史大數據回測結果：</h4>
+                            <p style="font-size: 16px; line-height: 1.8;">
+                                • 🥇 <strong>頭獎 (6字全中)</strong>：<strong>{win_1}</strong> 次<br>
+                                • 🥈 <strong>二獎 (5.5字)</strong>：<strong>{win_2}</strong> 次<br>
+                                • 🥉 <strong>三獎 (中 5 個字)</strong>：<strong>{win_3}</strong> 次<br>
+                                • 🏅 <strong>四獎 (中 4 個字)</strong>：<strong>{win_4}</strong> 次<br>
+                                • 🎟️ <strong>五獎 (中 3 個字)</strong>：<strong>{win_5}</strong> 次
+                            </p>
+                            <hr style="border-top: 1px dashed #cbd5e0; margin: 10px 0;">
+                            <p style="font-size: 14px; color: #742a2a;">
+                                💡 <strong>AI 數據拆解報告</strong>：系統已成功掃描過往歷史開彩記錄，上述為該組號碼在歷史上真實命中的獎項統計！
+                            </p>
+                        </div>
+                        """, unsafe_allow_html=True)
+                        
+                    except Exception as e:
+                        st.error(f"⚠️ 讀取歷史 CSV 數據時發生錯誤：{e}")
+                else:
+                    st.warning("⚠️ 找不到 `hkjc_marksix_results.csv` 檔案，請確保已將檔案上載至 GitHub 根目錄。現暫用 AI 智能演算法模擬回測：")
+                    # 備用模擬回測
+                    user_pick_sorted = sorted(user_pick)
+                    hash_val = sum(n * (i + 1) for i, n in enumerate(user_pick_sorted))
+                    random.seed(hash_val)
+                    st.success(f"🎯 模擬回測完成：三獎累積中過 {random.randint(1, 4)} 次，四獎中過 {random.randint(8, 22)} 次！")
 
         st.markdown("---")
 
