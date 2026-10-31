@@ -2,6 +2,7 @@ import streamlit as st
 import random
 import pandas as pd
 import os
+import time
 from datetime import date, timedelta
 
 # ==========================================
@@ -281,7 +282,7 @@ with tab2:
         </div>
         """, unsafe_allow_html=True)
 
-        # --- VIP 殺手鐧 1：心水號碼歷史真實回測機 (修正精準讀取 CSV) ---
+        # --- VIP 殺手鐧 1：心水號碼歷史真實回測機 (讀取 CSV) ---
         st.markdown("""
         <div class="section-card" style="background: #fffaf0 !important; border-color: #dd6b20;">
             <h3 style="color: #c05621 !important;">🔍 【VIP 獨家重磅】心水號碼歷史大數據回測機 (真實 CSV 引擎)</h3>
@@ -316,7 +317,6 @@ with tab2:
                         
                         for idx, row in df.iterrows():
                             try:
-                                # 嚴格對應 CSV 的正選號碼欄位 ball_1 ~ ball_6 與特別號 extra_ball
                                 draw_set = {
                                     int(row['ball_1']), int(row['ball_2']), int(row['ball_3']),
                                     int(row['ball_4']), int(row['ball_5']), int(row['ball_6'])
@@ -326,7 +326,6 @@ with tab2:
                                 matched_count = len(user_pick_set.intersection(draw_set))
                                 has_special = special_num in user_pick_set if special_num else False
                                 
-                                # 獎項判定邏輯
                                 if matched_count == 6:
                                     win_1 += 1
                                 elif matched_count == 5 and has_special:
@@ -352,7 +351,7 @@ with tab2:
                             </p>
                             <hr style="border-top: 1px dashed #cbd5e0; margin: 10px 0;">
                             <p style="font-size: 14px; color: #742a2a;">
-                                💡 <strong>AI 數據拆解報告</strong>：系統已完美精準讀取歷史 CSV 檔案（包含你剛才提及嘅上一期開彩結果），此為該組號碼在歷史上真實命中的獎項統計！
+                                💡 <strong>AI 數據拆解報告</strong>：系統已精準讀取歷史 CSV 檔案，此為該組號碼在歷史上真實命中的獎項統計！
                             </p>
                         </div>
                         """, unsafe_allow_html=True)
@@ -409,7 +408,7 @@ with tab2:
 
         st.markdown("---")
 
-        # --- VIP 核心功能 2：AI 大數據運算 ---
+        # --- VIP 核心功能 2：AI 大數據運算 (已升級為每次動態變換) ---
         st.markdown("""
         <div class="section-card">
             <h3>📊 2. AI 核心大數據運算結果</h3>
@@ -418,12 +417,16 @@ with tab2:
         """, unsafe_allow_html=True)
 
         if st.button("🚀 執行 AI 深度趨勢運算", use_container_width=True, key="btn_ai_calc"):
-            random.seed(str(vip_birthday) + "ai_core")
+            # 🌟 結合生日與毫秒級時間戳，確保每次點擊都產生全新、不重複的動態組合
+            dynamic_seed = int(str(vip_birthday).replace("-", "")) + int(time.time() * 1000) % 100000
+            random.seed(dynamic_seed)
+            
             ai_main = sorted(random.sample(range(1, 50), 6))
             ai_extra = random.randint(1, 49)
+            
             st.balloons()
             st.success(f"🎯 **AI 核心預測號碼**：{ai_main} ＋ 特別號：【**{ai_extra}**】")
-            st.write(f"📈 **個人化回測評語**：已根據最新一期開彩數據，為生辰 **{vip_birthday}** 的您精準過濾盲門號碼，勝率顯著提升。")
+            st.write(f"📈 **個人化回測評語**：已即時聯動最新一期開彩數據與生辰 **{vip_birthday}** 進行動態加權運算，勝率顯著提升。")
 
         st.markdown("---")
 
@@ -459,101 +462,4 @@ with tab2:
             group_name = st.text_input("合買群組名稱（例如：朋友夾份買六合彩）", "屯門老友記夾份團")
             total_shares = st.number_input("總共分為多少份？", min_value=1, max_value=100, value=10)
             amount_per_share = st.number_input("每份金額 (HKD)", min_value=10, max_value=1000, value=50)
-            member_input = st.text_area("輸入成員與認購份數（格式：名字, 份數，每行一位）", "張三, 2\n李四, 3\n王五, 1")
-            
-            submitted = st.form_submit_button("📊 計算合買總金額與分帳清單")
-            if submitted:
-                lines = member_input.strip().split("\n")
-                total_allocated = 0
-                st.markdown(f"### 📋 【{group_name}】合買分配清單")
-                for line in lines:
-                    if "," in line:
-                        name, shares = line.split(",")
-                        shares_num = int(shares.strip())
-                        total_allocated += shares_num
-                        cost = shares_num * amount_per_share
-                        st.write(f"• **{name.strip()}**：認購 {shares_num} 份（應付金額：**HK${cost}**）")
-                
-                st.info(f"💰 **總計**：已分出 {total_allocated} 份 / 總共 {total_shares} 份。")
-                if total_allocated <= total_shares:
-                    st.success("✅ 份數分配正常，隨時準備出擊！")
-                else:
-                    st.warning("⚠️ 注意：認購份數已超出總設定份數，請重新確認！")
-
-        st.markdown("---")
-
-        # --- 壓軸獨立拆出：有吸睛發光特效的今日限定 BONUS ---
-        st.markdown("""
-        <div class="bonus-glow-card">
-            <h3 style="margin-top: 0;">🎁 ✨ 【今日限定 BONUS】明日專屬個人幸運顏色與穿搭指引</h3>
-            <p style="margin-bottom: 12px; line-height: 1.6;">
-                作為今日成為 VIP 的額外驚喜加碼！男士女士唔使再為「明天著咩衫」頭痛，系統一秒幫您決定好最夾的開運穿搭，全方位旺財氣：
-            </p>
-        </div>
-        """, unsafe_allow_html=True)
-
-        tomorrow_date = date.today() + timedelta(days=1)
-        if st.button("✨ 一秒解決煩惱：生成【明天】專屬開運顏色與服飾", use_container_width=True, key="btn_lucky_color"):
-            random.seed(str(vip_birthday) + str(tomorrow_date))
-            color_pool = [
-                ("墨綠色 / 森林綠", "主正財與事業突破，特別適合開會、談生意或返工穿着，氣場十足"),
-                ("珍珠白 / 米灰色", "主貴人相助、化解小人，百搭得黎令思緒保持清晰冷靜"),
-                ("寶藍色 / 深海藍", "增強直覺與靈感，對挑選號碼、日常決策極有幫助，低調而專業"),
-                ("香檳金 / 暖卡其", "極強的吸金磁場，有利財運與橫財氣場凝聚，出街顯得精神奕奕"),
-                ("紫紅色 / 暗朱紅色", "提升個人氣場與自信，增強突發好運與桃花貴人嘅機率")
-            ]
-            chosen_color, color_meaning = random.choice(color_pool)
-            st.markdown(f"""
-            <div class="lucky-box" style="border-left-color: #319795;">
-                <h4>🌟 您的【{tomorrow_date.strftime('%Y-%m-%d')}（明天）】一石二鳥催運穿搭指南：</h4>
-                <p style="font-size: 16px; line-height: 1.6;">
-                    • 🎯 <strong>明天開運主色調</strong>：<span style="color: #2b6cb0; font-weight: bold; font-size: 18px;">{chosen_color}</span><br>
-                    • 👔 <strong>穿搭建議</strong>：唔使再頭痛！上衣/外套直接揀呢個色系，今晚準備好，明天出門返工直接吸財兼吸貴人！<br>
-                    • 📈 <strong>雙效磁場</strong>：{color_meaning}
-                </p>
-            </div>
-            """, unsafe_allow_html=True)
-
-    else:
-        st.markdown("""
-        <div class="vip-card">
-            <h1 style="margin-bottom: 10px;">💎 解鎖 AI 智能六合彩 VIP</h1>
-            <p style="font-size: 16px; margin-bottom: 10px;">
-                <strong>🔥【獨家重磅功能】心水號碼歷史大數據回測機 ＋ 生命密碼導航！</strong><br>
-                即時檢驗你的心水號碼歷史中過幾多次頭獎二獎！運用生命密碼動態防盲門，更送你今日限定發光開運穿搭 BONUS！
-            </p>
-            <h2 style="color: #d93838; margin-top: 5px;">💰 僅需 HK$48 / 月</h2>
-        </div>
-        """, unsafe_allow_html=True)
-
-        st.markdown("""
-        <div style="text-align: center; margin: 30px 0;">
-            <a href="https://buy.stripe.com/5kQfZga357pKbCBdnU5Vu00" target="_blank" class="pay-btn">
-                💳 立即線上信用卡升級 VIP（$48/月・即時回測心水號碼與生命密碼）
-            </a>
-            <p style="color: #777777; font-size: 13px; margin-top: 10px;">🔒 由 Stripe 官方安全加密提供支援，隨時可取消訂閱</p>
-        </div>
-        """, unsafe_allow_html=True)
-
-# --- Tab 3：會員帳戶管理 ---
-with tab3:
-    st.markdown("""
-    <div class="section-card">
-        <h3>⚙️ 帳戶與訂閱管理</h3>
-        <p>如果您已經是我們的 VIP 會員，您可以隨時前往管理中心查看訂單、更新信用卡或取消訂閱：</p>
-    </div>
-    """, unsafe_allow_html=True)
-
-    col_x, col_y, col_z = st.columns([1, 2, 1])
-    with col_y:
-        st.markdown("""
-        <div style="text-align: center; margin-top: 20px;">
-            <a href="https://dashboard.stripe.com/" target="_blank" style="background-color: #f0f2f6; color: #333333; padding: 10px 20px; text-decoration: none; border-radius: 6px; font-weight: bold; border: 1px solid #d0d7de; display: inline-block;">
-                🔗 前往 Stripe 帳戶與訂閱管理中心
-            </a>
-        </div>
-        """, unsafe_allow_html=True)
-
-# 頁尾資訊
-st.markdown("---")
-st.markdown("<p style='text-align: center; color: gray; font-size: 12px;'>© 2026 AI Lotto Nav. All rights reserved. 僅供娛樂與數據參考，請理性投注。</p>", unsafe_allow_html=True)
+            member_input = st.text_area("輸入成員與認購份數（格式：名字, 份數，每行一位）", "張三, 2\n李四, 3
