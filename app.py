@@ -2,15 +2,17 @@ import streamlit as st
 import random
 from datetime import date, timedelta
 
-# 頁面基本設定
+# ==========================================
+# 1. 頁面基本設定與 SEO / Favicon 注入
+# ==========================================
 st.set_page_config(
-    page_title="AI 智能六合彩 VIP 尊貴會員導航",
-    page_icon="🔮",
+    page_title="六合彩生命密碼 | AI 大數據幸運號碼導航",
+    page_icon="logo.png",  # 瀏覽器分頁小圖標（對應你上載的 logo.png）
     layout="centered",
     initial_sidebar_state="collapsed"
 )
 
-# 🌟 專屬加入 Google Search Console 驗證標籤（絕對不影響原有 Layout）
+# 🌟 專屬加入 Google Search Console 驗證標籤
 st.markdown('<meta name="google-site-verification" content="nbbI0OAcsp83w065H9PjLBf959kRLFx4kK16f1KJhfI" />', unsafe_allow_html=True)
 
 # 徹底隱藏 Streamlit 右下角所有官方選單、工具列及個人檔案跳轉連結
@@ -20,17 +22,13 @@ st.markdown("""
 footer {visibility: hidden !important; display: none !important;}
 header {visibility: hidden !important; display: none !important;}
 .stAppDeployButton {display: none !important; visibility: hidden !important;}
-/* 徹底封鎖右下角所有 Streamlit 浮動選單與徽章 */
 div[data-testid="stToolbar"] {visibility: hidden !important; display: none !important;}
 div[class*="viewerBadge"] {display: none !important; visibility: hidden !important; pointer-events: none !important;}
 div[class*="styles_viewerBadge"] {display: none !important; visibility: hidden !important;}
 #GithubIcon {visibility: hidden !important; display: none !important;}
 .viewerBadge_container__1QSob {display: hidden !important; visibility: hidden !important;}
-
-/* 強制隱藏畫面右下角任何懸浮按鈕 */
 .reportview-container .main footer {visibility: hidden !important;}
 
-/* 強制全局文字在深色模式下保持清晰可見 */
 .stApp {
     color: #222222;
 }
@@ -115,7 +113,6 @@ div[class*="styles_viewerBadge"] {display: none !important; visibility: hidden !
     color: #c53030 !important;
 }
 
-/* 🌟 強制修正 Streamlit 原生成功、提示框在深色模式下變黑底看不見的問題 */
 div.stSuccess {
     background-color: #d4edda !important;
     color: #155724 !important;
@@ -132,7 +129,6 @@ div.stInfo p, div.stInfo span {
     color: #0c5460 !important;
 }
 
-/* 🌟 強制按鈕在手機深色模式下保持清晰醒目 */
 .stButton button {
     background-color: #ff4b4b !important;
     color: #ffffff !important;
@@ -144,7 +140,6 @@ div.stInfo p, div.stInfo span {
     color: #ffffff !important;
 }
 
-/* 🌟 超吸睛動態閃爍發光卡片（專門用來包裝今日限定 BONUS） */
 @keyframes glow-pulse {
     0% { box-shadow: 0 0 5px rgba(49,151,149, 0.4), 0 0 10px rgba(49,151,149, 0.2); border-color: #319795; }
     50% { box-shadow: 0 0 20px rgba(49,151,149, 0.8), 0 0 30px rgba(49,151,149, 0.4); border-color: #2b6cb0; }
@@ -173,7 +168,13 @@ if "vip" in query_params and query_params["vip"] == "true":
 else:
     st.session_state.is_vip = False
 
-# 頁面標題
+# ==========================================
+# 2. 頁面頂部：置中顯示公司 Company Logo 與標題
+# ==========================================
+col_logo1, col_logo2, col_logo3 = st.columns([1, 2, 1])
+with col_logo2:
+    st.image("company_logo.png", use_container_width=True)
+
 st.markdown('<div class="main-title">🔮 AI 智能六合彩資料導航</div>', unsafe_allow_html=True)
 st.markdown('<div class="sub-title">運用大數據與個人化【生命密碼】分析，助您精準掌握高勝率幸運號碼</div>', unsafe_allow_html=True)
 
