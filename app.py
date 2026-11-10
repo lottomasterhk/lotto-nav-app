@@ -608,4 +608,4 @@ with tab3:
 
 # 頁尾資訊
 st.markdown("---")
-st.markdown("<p style='text-align: center; color: gray; font-size: 12px;'>© 2026 AI Lotto Nav. All rights reserved. 僅供娛樂與數據參考，請理性投注。</p>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center; color: gray; font-size: 12px;'>© 2026 AI Lotto Nav. All rights reserved. 僅供娛樂與數據參1考，請理性投注。</p>", unsafe_allow_html=True)
