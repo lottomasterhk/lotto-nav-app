@@ -8,15 +8,35 @@ from datetime import date, timedelta
 # 1. 頁面基本設定與 SEO / Favicon / Google Tag 注入
 # ==========================================
 st.set_page_config(
-    page_title="六合彩生命密碼 | AI 大數據幸運號碼導航",
+    page_title="六合彩生命密碼 | AI 大數據幸運號碼導航與歷史回測",
     page_icon="logo.png",
     layout="centered",
     initial_sidebar_state="collapsed"
 )
 
-# 🌟 加入 Google Search Console 驗證標籤 ＆ Google Ads 追蹤代碼 (AW-18553406259)
+# 🌟 全面強化 SEO Meta 標籤、Google Search Console 驗證、Google Ads 追蹤代碼及 Open Graph 社交分享預覽
 st.markdown("""
 <meta name="google-site-verification" content="nbbI0OAcsp83w065H9PjLBf959kRLFx4kK16f1KJhfI" />
+<meta name="description" content="全港獨家 AI 智能六合彩大數據回測系統與個人化生命密碼導航。一鍵檢驗心水號碼歷史中獎記錄，動態避開盲門死角，精準推演高勝率幸運號碼！">
+<meta name="keywords" content="六合彩, 生命密碼, AI六合彩預測, 六合彩歷史回測, 心水號碼, 智能六合彩, 避開盲門, 六合彩大數據">
+<meta name="author" content="AI Master Lotto">
+
+<!-- Open Graph / Social Media Sharing Tags (Facebook, WhatsApp 預覽優化) -->
+<meta property="og:title" content="六合彩生命密碼 | AI 大數據幸運號碼導航與歷史回測">
+<meta property="og:description" content="唔好盲買電腦飛！用大數據與歷史回測機幫你計最強心水號碼，結合生命密碼助你期期中獎。">
+<meta property="og:type" content="website">
+
+<!-- Structured Data (JSON-LD) 幫助 Google 蜘蛛更易理解網站結構 -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "六合彩生命密碼 AI 導航",
+  "url": "https://ai-masterlotto.streamlit.app",
+  "description": "結合 AI 大數據、歷史回測與個人化生命密碼的六合彩號碼導航與防盲門系統。"
+}
+</script>
+
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=AW-18553406259"></script>
 <script>
@@ -608,4 +628,4 @@ with tab3:
 
 # 頁尾資訊
 st.markdown("---")
-st.markdown("<p style='text-align: center; color: gray; font-size: 12px;'>© 2026 AI Lotto Nav. All rights reserved. 僅供娛樂與數據參1考，請理性投注。</p>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center; color: gray; font-size: 12px;'>© 2026 AI Lotto Nav. All rights reserved. 僅供娛樂與數據參考，請理性投注。</p>", unsafe_allow_html=True)
