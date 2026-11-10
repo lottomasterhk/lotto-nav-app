@@ -16,7 +16,7 @@ st.set_page_config(
 
 # 🌟 加入 Google Search Console 驗證標籤 ＆ Google Ads 追蹤代碼 (AW-18553406259)
 st.markdown("""
-<meta name="google-site-verification" content="zFjYtXRlFqbJnnZtMR9bT5wMnJgD4Te5xUaFoiUiVSw" />
+<meta name="google-site-verification" content="nbbI0OAcsp83w065H9PjLBf959kRLFx4kK16f1KJhfI" />
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=AW-18553406259"></script>
 <script>
