@@ -5,7 +5,7 @@ import os
 from datetime import date, timedelta
 
 # ==========================================
-# 1. 頁面基本設定與 SEO / Favicon 注入
+# 1. 頁面基本設定與 SEO / Favicon / Google Tag 注入
 # ==========================================
 st.set_page_config(
     page_title="六合彩生命密碼 | AI 大數據幸運號碼導航",
@@ -14,8 +14,18 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# 🌟 專屬加入 Google Search Console 驗證標籤
-st.markdown('<meta name="google-site-verification" content="zFjYtXRlFqbJnnZtMR9bT5wMnJgD4Te5xUaFoiUiVSw" />', unsafe_allow_html=True)
+# 🌟 加入 Google Search Console 驗證標籤 ＆ Google Ads 追蹤代碼 (AW-18553406259)
+st.markdown("""
+<meta name="google-site-verification" content="zFjYtXRlFqbJnnZtMR9bT5wMnJgD4Te5xUaFoiUiVSw" />
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=AW-18553406259"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'AW-18553406259');
+</script>
+""", unsafe_allow_html=True)
 
 # 徹底隱藏 Streamlit 右下角所有官方選單、工具列及個人檔案跳轉連結
 st.markdown("""
@@ -225,7 +235,7 @@ with tab1:
         </p>
         <ul style="font-size: 15px; color: #2d3748; line-height: 1.8;">
             <li>🔍 <strong>【震撼殺手鐧】心水號碼歷史大數據回測機</strong>：親自驗證你手頭上那組號碼過去究竟中過幾多次頭、二、三獎，拒絕盲目執著！</li>
-            <li>🧬 <strong>生命密碼獨家深度推演</strong>：結合你的真實生辰八字與能量頻率，每期動態過濾防盲門，精準推演 3 組互不撞號的高勝率組合。</li>
+            <li>🧬 <strong>生命密碼獨家深度推演</strong>：結合你的真實生辰八字與能量頻率，每期動態防盲門，精準推演 3 組互不撞號的高勝率組合。</li>
             <li>🔄 <strong>每期實時動態剔除盲門</strong>：全港獨家！每期攪珠後第一時間更新，自動幫你洗走歷史盲門死角，避開高風險陷阱。</li>
             <li>📊 <strong>AI 核心大數據走勢矩陣</strong>：結合最新冷熱門走勢與靈數模型，大幅提升命中率。</li>
             <li>🤝 <strong>智慧合買與分帳管理系統</strong>：與同事、老友記夾份買彩票？系統自動幫你計好每人認購份數同應付金額，清楚無爭拗！</li>
@@ -443,7 +453,7 @@ with tab2:
         rng_nav = random.Random(nav_seed)
 
         directions = [
-            ("正南方（南離宮）", "主貴人與突發靈感，利正財與偏財"),
+            ("正南方（南離宮）", "主貴人與突發靈感，利正財與偏財氣場"),
             ("正北方（北坎宮）", "主思路清晰，利冷門號碼過濾與大局觀"),
             ("正東方（東震宮）", "主動力與衝勁，利快速決策與靈感爆發"),
             ("西北方（乾金位）", "主權威與大財氣，利合買團隊領軍下注"),
