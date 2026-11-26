@@ -1,7 +1,9 @@
 import streamlit as st
+import streamlit.components.v1 as components
 import random
 import pandas as pd
 import os
+import json
 from datetime import date, timedelta
 
 # ==========================================
@@ -17,13 +19,13 @@ st.set_page_config(
 # 🌟 全面強化 SEO Meta 標籤、Google Search Console 驗證、Google Ads 追蹤代碼及 Open Graph 社交分享預覽
 st.markdown("""
 <meta name="google-site-verification" content="nbbI0OAcsp83w065H9PjLBf959kRLFx4kK16f1KJhfI" />
-<meta name="description" content="全港獨家 AI 智能六合彩大數據回測系統與個人化生命密碼導航。17 注全號覆蓋方案結合個人生命密碼與過往開彩篩選，助你精準掌握幸運組合！">
+<meta name="description" content="全港獨家 AI 智能六合彩大數據回測系統與個人化生命密碼導航。17 注全號覆蓋排陣結合個人生命密碼與過往開彩篩選，自動安排分佈與計數，助你精準掌握幸運組合！">
 <meta name="keywords" content="六合彩, 生命密碼, AI六合彩預測, 六合彩歷史回測, 心水號碼, 智能六合彩, 17注全號覆蓋, 六合彩大數據">
 <meta name="author" content="AI Master Lotto">
 
 <!-- Open Graph / Social Media Sharing Tags (Facebook, WhatsApp 預覽優化) -->
 <meta property="og:title" content="六合彩生命密碼 | AI 大數據幸運號碼導航與歷史回測">
-<meta property="og:description" content="17 注全號覆蓋方案 ＋ 個人生命密碼 ＋ 過往組合篩選！立即體驗 AI 智能選號與歷史回測。">
+<meta property="og:description" content="17 注全號覆蓋排陣 ＋ 個人生命密碼 ＋ 過往組合篩選！自動幫你分佈計數，立即體驗 AI 智能選號與歷史回測。">
 <meta property="og:type" content="website">
 
 <!-- Structured Data (JSON-LD) 幫助 Google 蜘蛛更易理解網站結構 -->
@@ -33,7 +35,7 @@ st.markdown("""
   "@type": "WebSite",
   "name": "六合彩生命密碼 AI 導航",
   "url": "https://ai-masterlotto.streamlit.app",
-  "description": "結合 AI 大數據、歷史回測、17 注全號覆蓋與個人化生命密碼的六合彩號碼導航系統。"
+  "description": "結合 AI 大數據、歷史回測、17 注全號覆蓋排陣與個人化生命密碼的六合彩號碼導航系統。"
 }
 </script>
 
@@ -77,7 +79,19 @@ div[class*="styles_viewerBadge"] {display: none !important; visibility: hidden !
     text-align: center;
     color: #555555;
     font-size: 16px;
-    margin-bottom: 25px;
+    margin-bottom: 14px;
+}
+
+.hero-badge-box {
+    background: #fffaf0 !important;
+    border: 2px solid #dd6b20;
+    border-radius: 10px;
+    padding: 12px 16px;
+    text-align: center;
+    color: #7b341e !important;
+    font-size: 15px;
+    line-height: 1.6;
+    margin-bottom: 22px;
 }
 
 .section-card {
@@ -244,6 +258,16 @@ def load_historical_draws(csv_path="hkjc_marksix_results.csv"):
     return past_combos, draw_count
 
 
+def get_zone_label(bet_index):
+    """按 17 注分佈安排標示每注重點覆蓋區段，幫客解決分佈頭痛"""
+    if bet_index <= 6:
+        return "低段字頭分佈區（1–17 號為主）"
+    elif bet_index <= 12:
+        return "中段字頭分佈區（18–34 號為主）"
+    else:
+        return "高段字頭＋全盤補位區（35–49 號＋平衡配搭）"
+
+
 def generate_17_bets_by_bday_and_date(bday_value, target_date, past_combos):
     """
     以「個人生命密碼（出生日期） + 今日日期」鎖定生成 17 注，
@@ -284,32 +308,97 @@ def generate_17_bets_by_bday_and_date(bday_value, target_date, past_combos):
     return bets
 
 
+def build_copy_text(visible_bets, bday_value, target_date, is_vip_user):
+    """整理成方便喺手機抄注或貼去群組夾份分帳嘅純文字"""
+    header = f"【{target_date}｜生命密碼 {bday_value}】17 注全號覆蓋排陣整理\n"
+    lines = [header]
+    for i, nums in enumerate(visible_bets, start=1):
+        nums_str = ", ".join(f"{n:02d}" for n in nums)
+        lines.append(f"第{i:02d}注（$10）：{nums_str}")
+    if not is_vip_user:
+        lines.append("（免費版顯示頭 10 注；其餘 7 條隨時中頭獎注項升級 VIP 即可解鎖）")
+    return "\n".join(lines)
+
+
+def render_copy_box(copy_text, btn_label="📋 一鍵複製號碼清單"):
+    """提供一鍵複製按鈕＋可長按複製嘅文字框，方便手機用戶"""
+    escaped_json = json.dumps(copy_text)
+    components.html(
+        f"""
+        <div style="margin: 8px 0 14px 0;">
+            <button onclick="copyLottoText()" style="
+                background-color: #2b6cb0;
+                color: #ffffff;
+                border: none;
+                border-radius: 8px;
+                padding: 10px 18px;
+                font-size: 15px;
+                font-weight: bold;
+                cursor: pointer;
+                width: 100%;
+            ">{btn_label}</button>
+            <div id="copy-status" style="color: #2f855a; font-size: 13px; margin-top: 6px; font-weight: bold;"></div>
+        </div>
+        <script>
+        function copyLottoText() {{
+            const textToCopy = {escaped_json};
+            const statusEl = document.getElementById("copy-status");
+            if (navigator.clipboard && navigator.clipboard.writeText) {{
+                navigator.clipboard.writeText(textToCopy).then(function() {{
+                    statusEl.innerText = "✅ 已複製到剪貼簿，可直接貼去落注或群組分帳！";
+                }}, function() {{
+                    fallbackCopy(textToCopy, statusEl);
+                }});
+            }} else {{
+                fallbackCopy(textToCopy, statusEl);
+            }}
+        }}
+        function fallbackCopy(text, statusEl) {{
+            const ta = document.createElement("textarea");
+            ta.value = text;
+            document.body.appendChild(ta);
+            ta.select();
+            try {{
+                document.execCommand("copy");
+                statusEl.innerText = "✅ 已複製到剪貼簿，可直接貼去落注或群組分帳！";
+            }} catch (e) {{
+                statusEl.innerText = "ℹ️ 請長按下方文字框手動全選複製。";
+            }}
+            document.body.removeChild(ta);
+        }}
+        </script>
+        """,
+        height=72,
+    )
+    st.text_area("方便抄注／夾份分帳純文字清單：", value=copy_text, height=150, label_visibility="collapsed")
+
+
 def render_17_bets_module(bday_value, target_date, is_vip_user, key_prefix="main"):
-    """一頁過渲染「17 注全號覆蓋方案」說明、鎖定組合與免費/VIP 顯示"""
+    """一頁過渲染「17 注全號覆蓋方案」分佈安排、計數、一鍵複製清單與免費/VIP 顯示"""
     past_combos_set, total_past_draws = load_historical_draws("hkjc_marksix_results.csv")
     bets_17 = generate_17_bets_by_bday_and_date(bday_value, target_date, past_combos_set)
+    covered_all_49 = sorted({num for row in bets_17 for num in row})
 
     st.markdown("""
     <div class="section-card" style="background: #f7fafc !important; border: 2px solid #2b6cb0;">
-        <h3 style="color: #2b6cb0 !important; margin-top: 0;">🎯 17 注全號覆蓋方案 ＋ 個人生命密碼 ＋ 過往組合篩選</h3>
+        <h3 style="color: #2b6cb0 !important; margin-top: 0;">🎯 17 注全號覆蓋排陣 ＋ 個人生命密碼 ＋ 過往組合篩選</h3>
         <p style="line-height: 1.7;">
-            <strong>1. 方案係咩？</strong><br>
-            將 1 至 49 號分散排入 <strong>17 組 6 字單式注項</strong>，以精簡注數做到全盤號碼覆蓋，唔再只押少數號碼而錯過其他字頭。
+            <strong>唔使自己頭痛點分佈！系統已經幫你安排好 17 注（每注 $10，共 $170）：</strong><br>
+            • <strong>第 01–06 注</strong>：重點涵蓋低段字頭，減少漏字<br>
+            • <strong>第 07–12 注</strong>：重點涵蓋中段字頭，平衡分佈<br>
+            • <strong>第 13–17 注</strong>：重點涵蓋高段字頭及跨區補位，將 1–49 號全面納入
         </p>
         <p style="line-height: 1.7;">
-            <strong>2. 覆蓋全面有咩好處？</strong><br>
-            相比單純盲目撞幾個心水字，全號覆蓋可以將 1–49 號納入當期選號範圍，配合分注排列，減少「偏執死守幾個號碼」嘅盲點。
-        </p>
-        <p style="line-height: 1.7;">
-            <strong>3. 點解要加個人生命密碼？</strong><br>
-            每人出生日期對應唔同數字能量頻率。將<strong>個人生命密碼</strong>結合<strong>今日日期</strong>鎖定排陣，令今日每一組注項都同你個人磁場對齊，而且<strong>今日之內再按幾多次結果都完全一致</strong>，唔會朝令夕改。
-        </p>
-        <p style="line-height: 1.7; margin-bottom: 0;">
-            <strong>4. 點解仲要剔除過往號碼？好處係咩？</strong><br>
-            系統會對比過往開彩紀錄，剔除已開出嘅相同組合及低機率重複因素，幫你避開重覆舊牌面，每期都拎到經過篩選嘅全新參考組合。持續用落去，每期都可以按最新開彩紀錄同當日生命密碼重新對齊，值得長期訂閱 <strong>HK$48/月 VIP</strong> 作為固定選號工具！
+            <strong>點解全號覆蓋＋個人生命密碼＋剔除過往組合值得持續用？</strong><br>
+            全盤覆蓋可避免只死守少數號碼；結合<strong>個人生命密碼</strong>與<strong>今日日期</strong>鎖定排陣，今日再按幾多次結果都一樣；再比對過往開彩紀錄剔除已開出相同組合，避開重覆舊牌面。每期隨最新開彩紀錄同當日生命密碼更新，持續訂閱 <strong>HK$48/月 VIP</strong> 即可每期有系統跟住買。
         </p>
     </div>
     """, unsafe_allow_html=True)
+
+    c_m1, c_m2, c_m3 = st.columns(3)
+    c_m1.metric("總注數／預算", "17 注 / $170")
+    c_m2.metric("涵蓋號碼數目", f"{len(covered_all_49)} / 49 號")
+    c_m3.metric("今日解鎖進度", "17 / 17 注" if is_vip_user else "10 / 17 注（7 注待解鎖）")
 
     if total_past_draws > 0:
         st.caption(f"✅ 已比對 {total_past_draws} 期過往開彩紀錄，並已按生命密碼（{bday_value}）及今日日期（{target_date}）鎖定今日 17 注。")
@@ -320,19 +409,31 @@ def render_17_bets_module(bday_value, target_date, is_vip_user, key_prefix="main
         st.rerun()
 
     if is_vip_user:
-        st.success("💎 VIP 已解鎖：以下為今日完整 17 注（覆蓋 1–49 號，已篩選過往相同組合）")
+        st.success("💎 VIP 已解鎖：以下為今日完整 17 注分佈安排（已覆蓋 1–49 號，已篩選過往相同組合）")
         for idx_b, b_nums in enumerate(bets_17, start=1):
-            st.markdown(f'<div class="bet-row-card">第 {idx_b:02d} 注：{b_nums}</div>', unsafe_allow_html=True)
+            zone_txt = get_zone_label(idx_b)
+            st.markdown(
+                f'<div class="bet-row-card">第 {idx_b:02d} 注（$10｜{zone_txt}）：{b_nums}</div>',
+                unsafe_allow_html=True
+            )
+        vip_copy_str = build_copy_text(bets_17, bday_value, target_date, True)
+        render_copy_box(vip_copy_str, "📋 一鍵複製全部 17 注清單")
     else:
-        st.info("🎁 免費試看頭 **10 注**（今日生命密碼鎖定版）：")
+        st.info("🎁 免費試看頭 **10 注**（已幫你排好分佈，今日生命密碼鎖定版）：")
         for idx_b in range(10):
-            st.markdown(f'<div class="bet-row-card">第 {idx_b+1:02d} 注：{bets_17[idx_b]}</div>', unsafe_allow_html=True)
+            zone_txt = get_zone_label(idx_b + 1)
+            st.markdown(
+                f'<div class="bet-row-card">第 {idx_b+1:02d} 注（$10｜{zone_txt}）：{bets_17[idx_b]}</div>',
+                unsafe_allow_html=True
+            )
+        free_copy_str = build_copy_text(bets_17[:10], bday_value, target_date, False)
+        render_copy_box(free_copy_str, "📋 一鍵複製已解鎖 10 注清單")
 
         st.markdown("""
         <div class="locked-bet-card">
-            <h4 style="color: #c05621; margin-top: 0;">🔒 仲有最後 7 注（第 11–17 注）未解鎖！</h4>
+            <h4 style="color: #c05621; margin-top: 0;">🔒 仲有最後 7 注（第 11–17 注・高段字頭＋全盤補位區）未解鎖！</h4>
             <p style="font-size: 15px; line-height: 1.65; margin-bottom: 0;">
-                <strong>呢 7 注隨時都中頭獎！</strong>好多時候關鍵號碼就藏喺最後幾注入面。只要升級成為 <strong>VIP 尊貴會員（僅需 HK$48/月）</strong>，即刻一次過拎齊全部 17 注，再加埋「心水號碼歷史回測機」同「每日幸運導航」，期期有系統跟住買！
+                <strong>呢 7 注隨時都中頭獎！</strong>唔好睇少尾段關鍵分佈，好多時候決定中大獎嘅號碼就喺呢幾注入面。立即升級成為 <strong>VIP 尊貴會員（僅需 HK$48/月）</strong>，即刻一次過拎齊全部 17 注，再加埋「心水號碼歷史回測機」同「每日幸運導航」，期期有系統跟住買！
             </p>
         </div>
         """, unsafe_allow_html=True)
@@ -354,7 +455,12 @@ with col_logo2:
     st.image("company_logo.png", use_container_width=True)
 
 st.markdown('<div class="main-title">🔮 AI 智能六合彩資料導航</div>', unsafe_allow_html=True)
-st.markdown('<div class="sub-title">運用大數據與個人化【生命密碼】分析，助您精準掌握高勝率幸運號碼</div>', unsafe_allow_html=True)
+st.markdown('<div class="sub-title">17 注全號覆蓋排陣 ＋ 個人【生命密碼】分析，自動幫你分佈計數，助您精準掌握幸運號碼</div>', unsafe_allow_html=True)
+st.markdown("""
+<div class="hero-badge-box">
+    <strong>💡 唔使再頭痛 17 注點樣分佈！</strong>系統自動按 <strong>低／中／高段字頭</strong> 排好 <strong>17 注（共 $170，涵蓋 1–49 號）</strong>，結合<strong>個人生命密碼</strong>及<strong>剔除過往相同組合</strong>，免費先睇 10 注，<strong>VIP（HK$48/月）</strong>解鎖其餘 7 條隨時中頭獎注項！
+</div>
+""", unsafe_allow_html=True)
 
 # 建立橫向分頁標籤
 tab1, tab2, tab3 = st.tabs(["🏠 今日免費號碼", "💎 VIP 尊貴會員專區", "⚙️ 會員帳戶管理"])
@@ -380,7 +486,7 @@ with tab1:
             st.success(f"🎯 依據您的生命密碼（{free_birthday}）推算出的免費基礎號碼：**{free_numbers}**")
             st.info("💡 提示：此為基礎隨機運算號碼。若要解鎖「生命密碼多組深度推演」與「心水號碼歷史回測機」，請升級 VIP！")
 
-    # --- 一頁過加入：17 注全號覆蓋方案（免費看 10 注，VIP 解鎖其餘 7 注） ---
+    # --- 一頁過加入：17 注全號覆蓋排陣（免費看 10 注，VIP 解鎖其餘 7 注） ---
     render_17_bets_module(free_birthday, date.today(), st.session_state.is_vip, key_prefix="tab1")
 
     # --- 核心賣點 ---
@@ -403,7 +509,7 @@ with tab1:
             出面求其買一個電腦飛都要 $10、$20，但盲目亂買只會陷入<strong>「盲門死角」</strong>。解鎖 VIP，運用你的<strong>生命密碼</strong>作為最強導航：
         </p>
         <ul style="font-size: 15px; color: #2d3748; line-height: 1.8;">
-            <li>🎯 <strong>17 注全號覆蓋 ＋ 過往組合篩選</strong>：全面涵蓋 1–49 號，結合個人生命密碼與今日日期鎖定，並剔除已開出相同組合，VIP 完整解鎖全部 17 注！</li>
+            <li>🎯 <strong>17 注全號覆蓋排陣 ＋ 過往組合篩選</strong>：自動幫你分佈低／中／高段字頭（共 17 注、$170，涵蓋 1–49 號），結合個人生命密碼與今日日期鎖定，並剔除已開出相同組合，VIP 完整解鎖全部 17 注！</li>
             <li>🔍 <strong>【震撼殺手鐧】心水號碼歷史大數據回測機</strong>：親自驗證你手頭上那組號碼過去究竟中過幾多次頭、二、三獎，拒絕盲目執著！</li>
             <li>🧬 <strong>生命密碼獨家深度推演</strong>：結合你的真實生辰八字與能量頻率，每期動態防盲門，精準推演 3 組互不撞號的高勝率組合。</li>
             <li>🔄 <strong>每期實時動態剔除盲門</strong>：全港獨家！每期攪珠後第一時間更新，自動幫你洗走歷史盲門死角，避開高風險陷阱。</li>
@@ -545,13 +651,13 @@ with tab2:
         st.markdown("""
         <div class="section-card" style="background: #fdf6e2 !important; border-color: #d69e2e;">
             <h3 style="color: #b7791f !important;">🔑 【核心設定】請輸入您的真實出生日期（生命密碼引擎）</h3>
-            <p style="color: #222222 !important;"><strong>注意</strong>：以下所有的生命密碼推演、AI 大數據運算及 17 注全號覆蓋方案，全部都是結合<strong>「每期最新更新的資料庫」</strong>並即時根據您輸入的生辰推算出來的！請務必核對準確。</p>
+            <p style="color: #222222 !important;"><strong>注意</strong>：以下所有的生命密碼推演、AI 大數據運算及 17 注全號覆蓋排陣，全部都是結合<strong>「每期最新更新的資料庫」</strong>並即時根據您輸入的生辰推算出來的！請務必核對準確。</p>
         </div>
         """, unsafe_allow_html=True)
 
         vip_birthday = st.date_input("🎂 請輸入您的出生日期（VIP 深度推演用）：", value=date(1977, 8, 20), key="vip_bday")
 
-        # --- VIP 專區同步顯示完整 17 注全號覆蓋方案 ---
+        # --- VIP 專區同步顯示完整 17 注全號覆蓋排陣 ---
         render_17_bets_module(vip_birthday, date.today(), True, key_prefix="tab2")
 
         st.markdown("---")
@@ -744,7 +850,7 @@ with tab2:
         <div class="vip-card">
             <h1 style="margin-bottom: 10px;">💎 解鎖 AI 智能六合彩 VIP</h1>
             <p style="font-size: 16px; margin-bottom: 10px;">
-                <strong>🔥【獨家重磅功能】17 注全號覆蓋方案 ＋ 個人生命密碼 ＋ 歷史大數據回測機！</strong><br>
+                <strong>🔥【獨家重磅功能】17 注全號覆蓋排陣 ＋ 個人生命密碼 ＋ 歷史大數據回測機！</strong><br>
                 解鎖其餘 7 條隨時中頭獎注項，即時檢驗心水號碼歷史中獎次數，更送你今日限定發光開運穿搭 BONUS！
             </p>
             <h2 style="color: #d93838; margin-top: 5px;">💰 僅需 HK$48 / 月</h2>
