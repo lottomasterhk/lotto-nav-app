@@ -11,7 +11,7 @@ st.set_page_config(
     page_title="六合彩生命密碼 | AI 大數據幸運號碼導航與歷史回測",
     page_icon="logo.png",
     layout="centered",
-    initial_sidebar_state="collapsed"
+    initial_sidebar_state="expanded"
 )
 
 # 🌟 全面強化 SEO Meta 標籤、Google Search Console 驗證、Google Ads 追蹤代碼及 Open Graph 社交分享預覽
@@ -199,6 +199,102 @@ if "vip" in query_params and query_params["vip"] == "true":
     st.session_state.is_vip = True
 else:
     st.session_state.is_vip = False
+
+
+def load_historical_draws(csv_path="hkjc_marksix_results.csv"):
+    """讀取歷史開彩 CSV，回傳已開出 6 字組合集合與總期數"""
+    past_combos = set()
+    draw_count = 0
+    if os.path.exists(csv_path):
+        try:
+            df = pd.read_csv(csv_path)
+            for _, row in df.iterrows():
+                try:
+                    combo = tuple(sorted([
+                        int(row["ball_1"]), int(row["ball_2"]), int(row["ball_3"]),
+                        int(row["ball_4"]), int(row["ball_5"]), int(row["ball_6"])
+                    ]))
+                    if len(combo) == 6:
+                        past_combos.add(combo)
+                        draw_count += 1
+                except Exception:
+                    continue
+        except Exception:
+            pass
+    return past_combos, draw_count
+
+
+def generate_17_bets_cover_49(past_combos, rng):
+    """
+    以 17 注（每注 $10 共 $170）覆蓋 1-49 全部號碼，
+    並確保每注 6 個號碼不重複、注與注之間不完全重複，且不與過往已開出 6 字組合完全相同。
+    """
+    all_49 = list(range(1, 50))
+    covered_pool = []
+    # 先將 1-49 打亂兩輪，湊夠 102 個號碼位置（17 注 x 6 = 102）
+    for _ in range(2):
+        batch = all_49.copy()
+        rng.shuffle(batch)
+        covered_pool.extend(batch)
+
+    bets = []
+    seen_in_session = set()
+
+    for idx in range(17):
+        chunk = covered_pool[idx * 6 : (idx + 1) * 6]
+        # 若該段有重複號碼，補齊至 6 個不重複號碼
+        unique_chunk = list(dict.fromkeys(chunk))
+        while len(unique_chunk) < 6:
+            candidate = rng.choice(all_49)
+            if candidate not in unique_chunk:
+                unique_chunk.append(candidate)
+
+        combo = tuple(sorted(unique_chunk[:6]))
+        # 確保唔同過往開出組合完全一樣，亦唔同今次已生成注項重複
+        attempts = 0
+        while (combo in past_combos or combo in seen_in_session) and attempts < 200:
+            res = sorted(rng.sample(all_49, 6))
+            combo = tuple(res)
+            attempts += 1
+
+        seen_in_session.add(combo)
+        bets.append(list(combo))
+
+    return bets
+
+
+# ==========================================
+# 1B. 左側欄功能：$170 買齊 49 個號碼（17 注去重版）
+# ==========================================
+with st.sidebar:
+    st.markdown("### 💰 $170 買齊 49 個號碼")
+    st.caption("17 注 × $10 = $170，分散覆蓋 1–49 號，並比對過往紀錄避免完全重複。")
+
+    past_combos_set, total_past_draws = load_historical_draws("hkjc_marksix_results.csv")
+    if total_past_draws > 0:
+        st.success(f"✅ 已載入 {total_past_draws} 期歷史紀錄作去重比對")
+    else:
+        st.caption("ℹ️ 未偵測到歷史 CSV，現以本輪不重複注項生成")
+
+    if st.button("🎲 生成今日 17 注（$170 去重版）", use_container_width=True, key="btn_gen_17_bets"):
+        rng_17 = random.Random()
+        st.session_state["bets_17_list"] = generate_17_bets_cover_49(past_combos_set, rng_17)
+
+    if "bets_17_list" not in st.session_state:
+        default_rng = random.Random(f"170-49-{date.today()}")
+        st.session_state["bets_17_list"] = generate_17_bets_cover_49(past_combos_set, default_rng)
+
+    bets_17 = st.session_state["bets_17_list"]
+    covered_numbers = sorted({n for row in bets_17 for n in row})
+    st.caption(f"已覆蓋號碼：{len(covered_numbers)} / 49 個號碼（總成本：$170）")
+
+    for i, b in enumerate(bets_17, start=1):
+        st.write(f"**第 {i:02d} 注**（$10）：`{b}`")
+
+    st.info(
+        "💡 **提示**：17 注單式可讓 1–49 號全部出現，並已排除與過往開出組合完全相同嘅注項；"
+        "但 49 號全包 6 字組合共有 13,983,816 注，此方案屬低成本分散選號，請理性投注。"
+    )
 
 # ==========================================
 # 2. 頁面頂部：置中顯示公司 Company Logo 與標題
