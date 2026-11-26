@@ -10,7 +10,7 @@ from datetime import date, timedelta
 # 1. 頁面基本設定與 SEO / Favicon / Google Tag 注入
 # ==========================================
 st.set_page_config(
-    page_title="六合彩生命密碼 | AI 大數據幸運號碼導航與歷史回測",
+    page_title="六合彩金多寶 17 注全號覆蓋排陣 | AI 生命密碼與歷史回測",
     page_icon="logo.png",
     layout="centered",
     initial_sidebar_state="collapsed"
@@ -19,13 +19,13 @@ st.set_page_config(
 # 🌟 全面強化 SEO Meta 標籤、Google Search Console 驗證、Google Ads 追蹤代碼及 Open Graph 社交分享預覽
 st.markdown("""
 <meta name="google-site-verification" content="nbbI0OAcsp83w065H9PjLBf959kRLFx4kK16f1KJhfI" />
-<meta name="description" content="全港獨家 AI 智能六合彩大數據回測系統與個人化生命密碼導航。17 注全號覆蓋排陣結合個人生命密碼與過往開彩篩選，自動安排分佈與計數，助你精準掌握幸運組合！">
-<meta name="keywords" content="六合彩, 生命密碼, AI六合彩預測, 六合彩歷史回測, 心水號碼, 智能六合彩, 17注全號覆蓋, 六合彩大數據">
+<meta name="description" content="迎接六合彩金多寶！17 注全號覆蓋排陣（17注買齊所有號碼分佈）結合個人生命密碼、剔除過往相同組合及歷史大數據回測，幫你排好 17 注唔使再頭痛。">
+<meta name="keywords" content="六合彩金多寶, 17 注全號覆蓋排陣, 17注買齊所有號碼, 六合彩生命密碼, AI六合彩預測, 六合彩歷史回測, 剔除過往號碼, HK$48 VIP">
 <meta name="author" content="AI Master Lotto">
 
 <!-- Open Graph / Social Media Sharing Tags (Facebook, WhatsApp 預覽優化) -->
-<meta property="og:title" content="六合彩生命密碼 | AI 大數據幸運號碼導航與歷史回測">
-<meta property="og:description" content="17 注全號覆蓋排陣 ＋ 個人生命密碼 ＋ 過往組合篩選！自動幫你分佈計數，立即體驗 AI 智能選號與歷史回測。">
+<meta property="og:title" content="六合彩金多寶 17 注全號覆蓋排陣 | AI 生命密碼與歷史回測">
+<meta property="og:description" content="17 注全號覆蓋排陣 ＋ 個人生命密碼 ＋ 剔除過往相同組合！自動幫你分佈計數，免費先睇 10 注，VIP 解鎖其餘 7 條隨時中頭獎注項。">
 <meta property="og:type" content="website">
 
 <!-- Structured Data (JSON-LD) 幫助 Google 蜘蛛更易理解網站結構 -->
@@ -33,9 +33,9 @@ st.markdown("""
 {
   "@context": "https://schema.org",
   "@type": "WebSite",
-  "name": "六合彩生命密碼 AI 導航",
+  "name": "六合彩金多寶 17 注全號覆蓋排陣 AI 導航",
   "url": "https://ai-masterlotto.streamlit.app",
-  "description": "結合 AI 大數據、歷史回測、17 注全號覆蓋排陣與個人化生命密碼的六合彩號碼導航系統。"
+  "description": "結合 17 注全號覆蓋排陣、六合彩金多寶策略、個人生命密碼與歷史大數據回測的號碼導航系統。"
 }
 </script>
 
@@ -310,7 +310,7 @@ def generate_17_bets_by_bday_and_date(bday_value, target_date, past_combos):
 
 def build_copy_text(visible_bets, bday_value, target_date, is_vip_user):
     """整理成方便喺手機抄注或貼去群組夾份分帳嘅純文字"""
-    header = f"【{target_date}｜生命密碼 {bday_value}】17 注全號覆蓋排陣整理\n"
+    header = f"【六合彩金多寶｜{target_date}｜生命密碼 {bday_value}】17 注全號覆蓋排陣整理\n"
     lines = [header]
     for i, nums in enumerate(visible_bets, start=1):
         nums_str = ", ".join(f"{n:02d}" for n in nums)
@@ -374,16 +374,16 @@ def render_copy_box(copy_text, btn_label="📋 一鍵複製號碼清單"):
 
 
 def render_17_bets_module(bday_value, target_date, is_vip_user, key_prefix="main"):
-    """一頁過渲染「17 注全號覆蓋方案」分佈安排、計數、一鍵複製清單與免費/VIP 顯示"""
+    """一頁過渲染「17 注全號覆蓋排陣」分佈安排、計數、一鍵複製清單與免費/VIP 顯示"""
     past_combos_set, total_past_draws = load_historical_draws("hkjc_marksix_results.csv")
     bets_17 = generate_17_bets_by_bday_and_date(bday_value, target_date, past_combos_set)
     covered_all_49 = sorted({num for row in bets_17 for num in row})
 
     st.markdown("""
     <div class="section-card" style="background: #f7fafc !important; border: 2px solid #2b6cb0;">
-        <h3 style="color: #2b6cb0 !important; margin-top: 0;">🎯 17 注全號覆蓋排陣 ＋ 個人生命密碼 ＋ 過往組合篩選</h3>
+        <h3 style="color: #2b6cb0 !important; margin-top: 0;">🎯 六合彩金多寶 17 注全號覆蓋排陣 ＋ 個人生命密碼 ＋ 過往組合篩選</h3>
         <p style="line-height: 1.7;">
-            <strong>唔使自己頭痛點分佈！系統已經幫你安排好 17 注（每注 $10，共 $170）：</strong><br>
+            <strong>唔使自己頭痛點分佈！系統已經幫你安排好 17 注（每注 $10，共 $170，17注買齊所有號碼分佈）：</strong><br>
             • <strong>第 01–06 注</strong>：重點涵蓋低段字頭，減少漏字<br>
             • <strong>第 07–12 注</strong>：重點涵蓋中段字頭，平衡分佈<br>
             • <strong>第 13–17 注</strong>：重點涵蓋高段字頭及跨區補位，將 1–49 號全面納入
@@ -454,11 +454,11 @@ col_logo1, col_logo2, col_logo3 = st.columns([1, 2, 1])
 with col_logo2:
     st.image("company_logo.png", use_container_width=True)
 
-st.markdown('<div class="main-title">🔮 AI 智能六合彩資料導航</div>', unsafe_allow_html=True)
-st.markdown('<div class="sub-title">17 注全號覆蓋排陣 ＋ 個人【生命密碼】分析，自動幫你分佈計數，助您精準掌握幸運號碼</div>', unsafe_allow_html=True)
+st.markdown('<div class="main-title">🔮 六合彩金多寶・17 注全號覆蓋排陣</div>', unsafe_allow_html=True)
+st.markdown('<div class="sub-title">17 注全號覆蓋排陣 ＋ 個人【生命密碼】分析 ＋ 歷史回測，自動幫你分佈計數，助您精準掌握幸運號碼</div>', unsafe_allow_html=True)
 st.markdown("""
 <div class="hero-badge-box">
-    <strong>💡 唔使再頭痛 17 注點樣分佈！</strong>系統自動按 <strong>低／中／高段字頭</strong> 排好 <strong>17 注（共 $170，涵蓋 1–49 號）</strong>，結合<strong>個人生命密碼</strong>及<strong>剔除過往相同組合</strong>，免費先睇 10 注，<strong>VIP（HK$48/月）</strong>解鎖其餘 7 條隨時中頭獎注項！
+    <strong>🏆 迎接六合彩金多寶！唔使再頭痛 17 注點樣分佈！</strong>系統自動按 <strong>低／中／高段字頭</strong> 排好 <strong>17 注（共 $170，涵蓋 1–49 號）</strong>，結合<strong>個人生命密碼</strong>及<strong>剔除過往相同組合</strong>，免費先睇 10 注，<strong>VIP（HK$48/月）</strong>解鎖其餘 7 條隨時中頭獎注項！
 </div>
 """, unsafe_allow_html=True)
 
