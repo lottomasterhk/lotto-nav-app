@@ -224,25 +224,28 @@ def load_historical_draws(csv_path="hkjc_marksix_results.csv"):
     return past_combos, draw_count
 
 
-def generate_17_bets_cover_49(past_combos, rng):
+def generate_17_bets_by_bday_and_date(bday_value, target_date, past_combos):
     """
-    以 17 注（每注 $10 共 $170）覆蓋 1-49 全部號碼，
-    並確保每注 6 個號碼不重複、注與注之間不完全重複，且不與過往已開出 6 字組合完全相同。
+    以「出生日期 + 今日日期」鎖定生成 17 注（每注 $10 共 $170），
+    確保今日之內重整或重複點擊結果完全一樣；
+    同時每注 6 個號碼唔重複、覆蓋 1-49 全部號碼，並比對過往紀錄避免完全相同。
     """
+    seed_key = f"life170|{bday_value}|{target_date}"
+    rng = random.Random(seed_key)
+
     all_49 = list(range(1, 50))
     covered_pool = []
-    # 先將 1-49 打亂兩輪，湊夠 102 個號碼位置（17 注 x 6 = 102）
+    # 17 注 x 6 = 102 個號碼位置，先將 1-49 打亂兩輪確保 1-49 全數納入
     for _ in range(2):
         batch = all_49.copy()
         rng.shuffle(batch)
         covered_pool.extend(batch)
 
     bets = []
-    seen_in_session = set()
+    seen_in_today = set()
 
     for idx in range(17):
         chunk = covered_pool[idx * 6 : (idx + 1) * 6]
-        # 若該段有重複號碼，補齊至 6 個不重複號碼
         unique_chunk = list(dict.fromkeys(chunk))
         while len(unique_chunk) < 6:
             candidate = rng.choice(all_49)
@@ -250,51 +253,16 @@ def generate_17_bets_cover_49(past_combos, rng):
                 unique_chunk.append(candidate)
 
         combo = tuple(sorted(unique_chunk[:6]))
-        # 確保唔同過往開出組合完全一樣，亦唔同今次已生成注項重複
         attempts = 0
-        while (combo in past_combos or combo in seen_in_session) and attempts < 200:
-            res = sorted(rng.sample(all_49, 6))
-            combo = tuple(res)
+        while (combo in past_combos or combo in seen_in_today) and attempts < 300:
+            combo = tuple(sorted(rng.sample(all_49, 6)))
             attempts += 1
 
-        seen_in_session.add(combo)
+        seen_in_today.add(combo)
         bets.append(list(combo))
 
     return bets
 
-
-# ==========================================
-# 1B. 左側欄功能：$170 買齊 49 個號碼（17 注去重版）
-# ==========================================
-with st.sidebar:
-    st.markdown("### 💰 $170 買齊 49 個號碼")
-    st.caption("17 注 × $10 = $170，分散覆蓋 1–49 號，並比對過往紀錄避免完全重複。")
-
-    past_combos_set, total_past_draws = load_historical_draws("hkjc_marksix_results.csv")
-    if total_past_draws > 0:
-        st.success(f"✅ 已載入 {total_past_draws} 期歷史紀錄作去重比對")
-    else:
-        st.caption("ℹ️ 未偵測到歷史 CSV，現以本輪不重複注項生成")
-
-    if st.button("🎲 生成今日 17 注（$170 去重版）", use_container_width=True, key="btn_gen_17_bets"):
-        rng_17 = random.Random()
-        st.session_state["bets_17_list"] = generate_17_bets_cover_49(past_combos_set, rng_17)
-
-    if "bets_17_list" not in st.session_state:
-        default_rng = random.Random(f"170-49-{date.today()}")
-        st.session_state["bets_17_list"] = generate_17_bets_cover_49(past_combos_set, default_rng)
-
-    bets_17 = st.session_state["bets_17_list"]
-    covered_numbers = sorted({n for row in bets_17 for n in row})
-    st.caption(f"已覆蓋號碼：{len(covered_numbers)} / 49 個號碼（總成本：$170）")
-
-    for i, b in enumerate(bets_17, start=1):
-        st.write(f"**第 {i:02d} 注**（$10）：`{b}`")
-
-    st.info(
-        "💡 **提示**：17 注單式可讓 1–49 號全部出現，並已排除與過往開出組合完全相同嘅注項；"
-        "但 49 號全包 6 字組合共有 13,983,816 注，此方案屬低成本分散選號，請理性投注。"
-    )
 
 # ==========================================
 # 2. 頁面頂部：置中顯示公司 Company Logo 與標題
@@ -721,6 +689,45 @@ with tab3:
             </a>
         </div>
         """, unsafe_allow_html=True)
+
+# ==========================================
+# 3. 左側欄：$170 買齊 49 個號碼（生命密碼 + 今日日期鎖定，10 免費 + 7 VIP）
+# ==========================================
+with st.sidebar:
+    st.markdown("### 💰 $170 買齊 49 個號碼")
+    active_bday = st.session_state.get("vip_bday", free_birthday) if st.session_state.is_vip else free_birthday
+    today_str = date.today()
+    st.caption(f"已按生命密碼（{active_bday}）及今日日期（{today_str}）鎖定 17 注，今日再按幾多次都一樣。")
+
+    past_combos_set, total_past_draws = load_historical_draws("hkjc_marksix_results.csv")
+    if total_past_draws > 0:
+        st.caption(f"✅ 已比對 {total_past_draws} 期過往開彩紀錄，避免同過往完全一樣。")
+
+    if st.button("🔄 重新檢視今日鎖定 17 注", use_container_width=True, key="btn_check_17_locked"):
+        st.rerun()
+
+    bets_17 = generate_17_bets_by_bday_and_date(active_bday, today_str, past_combos_set)
+
+    if st.session_state.is_vip:
+        st.success("💎 VIP 已解鎖：以下為完整 17 注（共 $170，覆蓋 1–49 號）")
+        for idx_b, b_nums in enumerate(bets_17, start=1):
+            st.write(f"**第 {idx_b:02d} 注**（$10）：`{b_nums}`")
+    else:
+        st.info("🎁 免費試看頭 **10 條**（每注 $10）：")
+        for idx_b in range(10):
+            st.write(f"**第 {idx_b+1:02d} 注**（$10）：`{bets_17[idx_b]}`")
+
+        st.warning(
+            "🔥 **仲有最關鍵 7 條（第 11–17 注）未解鎖！**\n\n"
+            "呢 **7 條**隨時都中頭獎！唔好錯過最後 7 條關鍵組合，立即升級 VIP（僅需 HK$48/月）一次過拎齊全部 17 條！"
+        )
+        st.markdown(
+            '<a href="https://buy.stripe.com/5kQfZga357pKbCBdnU5Vu00" target="_blank" class="pay-btn" '
+            'style="width:100%; text-align:center; font-size:15px; padding:12px 16px; box-sizing:border-box;">'
+            '💎 立即解鎖其餘 7 條關鍵注項（HK$48/月）'
+            '</a>',
+            unsafe_allow_html=True
+        )
 
 # 頁尾資訊
 st.markdown("---")
