@@ -68,78 +68,10 @@
       line-height: 1.7;
     }
 
-    .site-header {
-      background: var(--card);
-      border-bottom: 1px solid var(--border);
-      position: sticky;
-      top: 0;
-      z-index: 20;
-      box-shadow: 0 2px 10px rgba(15, 23, 42, 0.04);
-    }
-
-    .header-inner {
-      max-width: 860px;
-      margin: 0 auto;
-      padding: 12px 18px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 14px;
-    }
-
-    .brand-link {
-      display: flex;
-      align-items: center;
-      text-decoration: none;
-    }
-
-    .header-logo {
-      height: 68px;
-      width: auto;
-      max-width: 340px;
-      object-fit: contain;
-      display: block;
-    }
-
-    .header-actions {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-
-    .nav-link {
-      text-decoration: none;
-      color: var(--muted);
-      font-size: 14px;
-      font-weight: 600;
-      padding: 6px 10px;
-      border-radius: 8px;
-    }
-
-    .nav-link:hover {
-      background: #f1f5f9;
-      color: var(--text);
-    }
-
-    .nav-cta {
-      text-decoration: none;
-      background: var(--primary);
-      color: #ffffff;
-      font-size: 14px;
-      font-weight: 700;
-      padding: 10px 16px;
-      border-radius: 8px;
-    }
-
-    .nav-cta:hover {
-      background: var(--primary-dark);
-    }
-
     .container {
       max-width: 860px;
       margin: 0 auto;
-      padding: 24px 18px 56px;
+      padding: 28px 18px 56px;
     }
 
     .hero {
@@ -150,6 +82,16 @@
       text-align: center;
       box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
       margin-bottom: 22px;
+    }
+
+    .company-banner-logo {
+      width: 100%;
+      max-width: 460px;
+      height: auto;
+      max-height: 220px;
+      object-fit: contain;
+      margin: 0 auto 18px;
+      display: block;
     }
 
     .badge {
@@ -305,12 +247,9 @@
     }
 
     @media (max-width: 600px) {
-      .nav-link {
-        display: none;
-      }
-      .header-logo {
-        height: 48px;
-        max-width: 220px;
+      .company-banner-logo {
+        max-width: 340px;
+        max-height: 170px;
       }
       h1 {
         font-size: 24px;
@@ -322,22 +261,9 @@
   </style>
 </head>
 <body>
-  <header class="site-header">
-    <div class="header-inner">
-      <a class="brand-link" href="https://aimasterlotto.com/">
-        <img src="/company_logo.png" alt="六合彩生命密碼 MASTER LOTTO AI Company Logo" class="header-logo" />
-      </a>
-      <div class="header-actions">
-        <a class="nav-link" href="#distribution">17 注分佈</a>
-        <a class="nav-cta" href="https://ai-masterlotto.streamlit.app/" target="_blank" rel="noopener noreferrer">
-          開啓互動系統
-        </a>
-      </div>
-    </div>
-  </header>
-
   <main class="container">
     <section class="hero">
+      <img src="/company_logo.png" alt="六合彩生命密碼 MASTER LOTTO AI Company Logo" class="company-banner-logo" />
       <div class="badge">六合彩金多寶・全號覆蓋策略指南</div>
       <h1>六合彩金多寶 17 注全號覆蓋排陣</h1>
       <p class="subtitle">
