@@ -11,15 +11,15 @@
   <meta name="apple-mobile-web-app-title" content="六合彩生命密碼" />
   <link rel="canonical" href="https://aimasterlotto.com/" />
 
-  <link rel="icon" type="image/png" href="/logo.png" />
-  <link rel="shortcut icon" href="/logo.png" />
-  <link rel="apple-touch-icon" href="/logo.png" />
+  <link rel="icon" type="image/png" href="/company_logo.png" />
+  <link rel="shortcut icon" href="/company_logo.png" />
+  <link rel="apple-touch-icon" href="/company_logo.png" />
 
   <meta property="og:title" content="六合彩金多寶 17 注全號覆蓋排陣 | AI 生命密碼與歷史回測" />
   <meta property="og:description" content="17 注全號覆蓋排陣 ＋ 個人生命密碼 ＋ 歷史回測。自動幫你分佈低／中／高段字頭，一鍵跳入互動系統生成今日鎖定號碼。" />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://aimasterlotto.com/" />
-  <meta property="og:image" content="https://aimasterlotto.com/logo.png" />
+  <meta property="og:image" content="https://aimasterlotto.com/company_logo.png" />
 
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=AW-18553406259"></script>
@@ -37,7 +37,7 @@
     "name": "六合彩生命密碼",
     "alternateName": ["六合彩生命密碼", "aimasterlotto", "aimasterlotto.com"],
     "url": "https://aimasterlotto.com/",
-    "image": "https://aimasterlotto.com/logo.png",
+    "image": "https://aimasterlotto.com/company_logo.png",
     "description": "結合 17 注全號覆蓋排陣、個人生命密碼與歷史大數據回測的六合彩策略導航。"
   }
   </script>
@@ -68,10 +68,82 @@
       line-height: 1.7;
     }
 
+    .site-header {
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      box-shadow: 0 2px 10px rgba(15, 23, 42, 0.04);
+    }
+
+    .header-inner {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 12px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .brand-link {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: var(--text);
+      font-weight: 700;
+      font-size: 17px;
+    }
+
+    .header-logo {
+      height: 36px;
+      width: auto;
+      max-width: 140px;
+      object-fit: contain;
+      display: block;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .nav-link {
+      text-decoration: none;
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 600;
+      padding: 6px 10px;
+      border-radius: 8px;
+    }
+
+    .nav-link:hover {
+      background: #f1f5f9;
+      color: var(--text);
+    }
+
+    .nav-cta {
+      text-decoration: none;
+      background: var(--primary);
+      color: #ffffff;
+      font-size: 13px;
+      font-weight: 700;
+      padding: 8px 14px;
+      border-radius: 8px;
+    }
+
+    .nav-cta:hover {
+      background: var(--primary-dark);
+    }
+
     .container {
       max-width: 860px;
       margin: 0 auto;
-      padding: 28px 18px 56px;
+      padding: 24px 18px 56px;
     }
 
     .hero {
@@ -246,6 +318,12 @@
     }
 
     @media (max-width: 600px) {
+      .nav-link {
+        display: none;
+      }
+      .header-logo {
+        height: 30px;
+      }
       h1 {
         font-size: 24px;
       }
@@ -256,6 +334,21 @@
   </style>
 </head>
 <body>
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand-link" href="https://aimasterlotto.com/">
+        <img src="/company_logo.png" alt="六合彩生命密碼 Company Logo" class="header-logo" />
+        <span>六合彩生命密碼</span>
+      </a>
+      <div class="header-actions">
+        <a class="nav-link" href="#distribution">17 注分佈</a>
+        <a class="nav-cta" href="https://ai-masterlotto.streamlit.app/" target="_blank" rel="noopener noreferrer">
+          開啓互動系統
+        </a>
+      </div>
+    </div>
+  </header>
+
   <main class="container">
     <section class="hero">
       <img src="/logo.png" alt="六合彩生命密碼 Logo" class="brand-logo" />
